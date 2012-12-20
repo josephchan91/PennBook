@@ -1,0 +1,58 @@
+package edu.upenn.mkse212.pennbook.client;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+/**
+ * This is the interface for the chat communicating with the chat server.
+ * 
+ * @author Richard Zschech
+ */
+@RemoteServiceRelativePath("ChatService")
+public interface ChatService extends RemoteService {
+	/**
+	 * Utility class for simplifying access to the instance of async service.
+	 */
+	public static class Util {
+		private static ChatServiceAsync instance;
+		public static ChatServiceAsync getInstance(){
+			if (instance == null) {
+				instance = GWT.create(ChatService.class);
+			}
+			return instance;
+		}
+	}
+	/**
+	 * Gets the currently logged on user name.
+	 * 
+	 * @return
+	 * @throws ChatException
+	 */
+	public String getUserId() throws ChatException;
+	
+	/**
+	 * Login and setup a CometSession on the chat server.
+	 * 
+	 * @param username
+	 * @throws ChatException
+	 */
+	public void login(String userId) throws ChatException;
+	
+	/**
+	 * Logout and destroy the CometSession on the chat server.
+	 * 
+	 * @param username
+	 * @throws ChatException
+	 */
+	public void logout(String userId) throws ChatException;
+	
+	/**
+	 * Send a message to all users on the chat server.
+	 * 
+	 * @param message
+	 * @throws ChatException
+	 */
+	public void send(String senderId, String senderName, String receiverId, String message) throws ChatException;
+	
+}

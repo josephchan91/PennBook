@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>PennBook.html</welcome-file>
+  </welcome-file-list>
+  <servlet>
+  	<servlet-name>UserService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.UserServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>UserService</servlet-name>
+  	<url-pattern>/edu.upenn.mkse212.PennBook/UserService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>UpdateService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.UpdateServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>UpdateService</servlet-name>
+  	<url-pattern>/edu.upenn.mkse212.PennBook/UpdateService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>FriendshipService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.FriendshipServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FriendshipService</servlet-name>
+  	<url-pattern>/edu.upenn.mkse212.PennBook/FriendshipService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>FeedService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.FeedServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FeedService</servlet-name>
+  	<url-pattern>/edu.upenn.mkse212.PennBook/FeedService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>FriendRequestService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.FriendRequestServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FriendRequestService</servlet-name>
+  	<url-pattern>/edu.upenn.mkse212.PennBook/FriendRequestService</url-pattern>
+  </servlet-mapping>
+
+</web-app>

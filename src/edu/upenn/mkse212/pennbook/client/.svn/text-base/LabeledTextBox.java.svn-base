@@ -1,0 +1,60 @@
+package edu.upenn.mkse212.pennbook.client;
+
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.TextBox;
+
+public class LabeledTextBox extends TextBox {
+	String defaultText;
+	boolean isPassword;
+	TextBox textBox;
+	
+	public LabeledTextBox(String s, boolean b) {
+		super();
+		defaultText = s;
+		isPassword = b;
+		textBox = this;
+		
+		textBox.setText(defaultText);
+		
+		this.addFocusHandler(new FocusHandler(){
+			public void onFocus(FocusEvent e) {
+				if(textBox.getText().equals(defaultText)){
+					textBox.setText("");
+					if(isPassword){
+						DOM.setElementProperty(textBox.getElement(), "type", "password");
+					}
+				}
+			}
+		});
+		
+		this.addBlurHandler(new BlurHandler(){
+			public void onBlur(BlurEvent event) {
+				if(textBox.getText().equals("")){
+					textBox.setText(defaultText);
+					if(isPassword){
+						DOM.setElementProperty(textBox.getElement(), "type", "text");
+					}
+				}
+			}
+		});
+	}
+	
+	public boolean isDefaultOrEmpty() {
+		if (textBox.getText().equals(defaultText)) {
+			return true;
+		}
+		if (textBox.getText().trim().isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public void setToDefaultText() {
+		textBox.setText(defaultText);
+	}
+}
+

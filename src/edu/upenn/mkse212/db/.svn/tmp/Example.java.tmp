@@ -1,0 +1,128 @@
+package edu.upenn.mkse212.db;
+
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+
+import edu.upenn.mkse212.db.KeyValueStoreFactory.STORETYPE;
+import edu.upenn.mkse212.pennbook.client.FriendshipService;
+import edu.upenn.mkse212.pennbook.client.UserService;
+import edu.upenn.mkse212.pennbook.models.User;
+import edu.upenn.mkse212.pennbook.models.FeedItem.FeedItemType;
+import edu.upenn.mkse212.pennbook.server.FeedServiceImpl;
+import edu.upenn.mkse212.pennbook.server.FriendRequestServiceImpl;
+import edu.upenn.mkse212.pennbook.server.FriendshipServiceImpl;
+import edu.upenn.mkse212.pennbook.server.UserServiceImpl;
+
+/*
+ * Just trying out the db and service interfaces
+ */
+public class Example {
+	
+	public static void printListMap(Map<String,List<String>> map)
+	{
+		System.out.println("{");
+		for (String k : map.keySet())
+		{
+			System.out.print(k+":");
+			for (String v : map.get(k))
+				System.out.print(v+",");
+			System.out.println();
+		}
+		System.out.println("}");
+	}
+	
+	public static void printMap(Map<String,List<String>> map)
+	{
+		System.out.println("{");
+		for (String k : map.keySet())
+		{
+			System.out.print(k+":"+map.get(k));
+		}
+		System.out.println("}");
+	}
+	
+	public static void users()
+	{
+		UserServiceImpl userServ = new UserServiceImpl();
+		Map<String,String> u1 = userServ.createUser("Harald","Hrargaard", "abc@mailinator.com", "12345");
+		System.out.println(u1.get(IKeyValueStorage.KEYWORD_ATTR));
+		
+		
+		//u = userServ.login("123@mailinator.com", "12345");
+		Map<String, List<String>> u = userServ.get("89a359b6-27b9-44d5-9cb9-6faec0f3a4ed");
+		printListMap(u);
+
+	}
+	
+	
+	public static void friendships()
+	{
+		//System.out.println(u)
+		FriendshipServiceImpl friendshipServ = new FriendshipServiceImpl();
+		friendshipServ.addFriend("89a359b6-27b9-44d5-9cb9-6faec0f3a4ed", "8341759a-3a87-4013-ad4e-a56b183f4f2d");
+		System.out.println(friendshipServ.getFriendships("89a359b6-27b9-44d5-9cb9-6faec0f3a4ed") );
+	}
+	
+	public static void feed()
+	{
+		FeedServiceImpl feedServ = new FeedServiceImpl();
+		//feedServ.postFeedItem("I support voluntary human extinction.", "8341759a-3a87-4013-ad4e-a56b183f4f2d", "89a359b6-27b9-44d5-9cb9-6faec0f3a4ed","John Doe", "Askldf Asdfl", FeedItemType.POST);
+		//System.out.println(feedServ.getFeedItems("cd807083-618d-49c3-8ee6-b394cf8776cb"));
+		for (Map<String,List<String>> m : feedServ.getFeedItems("cd807083-618d-49c3-8ee6-b394cf8776cb"))
+			printListMap(m);
+		//String comment = feedServ.addComment("b594832d-098e-4b12-abc8-ab2740297fad", "8341759a-3a87-4013-ad4e-a56b183f4f2d", "John Doe", "Enkidu is better than Quetzacoatl.");
+		//System.out.println(comment);
+	}
+	
+	public static void friendRequest()
+	{
+		FriendRequestServiceImpl frServ = new FriendRequestServiceImpl();
+		//frServ.createFriendRequest("8341759a-3a87-4013-ad4e-a56b183f4f2d", "cd807083-618d-49c3-8ee6-b394cf8776cb", "John Doe");
+		//frServ.createFriendRequest("89a359b6-27b9-44d5-9cb9-6faec0f3a4ed", "cd807083-618d-49c3-8ee6-b394cf8776cb", "Askldf Asdfl");
+		
+		List<Map<String, String>> reqs = frServ.getFriendRequests("cd807083-618d-49c3-8ee6-b394cf8776cb");
+		System.out.println(reqs);
+		//System.out.println(reqs.get(1).getId());
+		
+		//frServ.deleteFriendRequest("a1a086fd-fc64-403c-b248-f36cac91ea8e");
+		
+		//frServ.getFriendRequests();
+	}
+	
+	public static void email()
+	{
+		UserServiceImpl userServ = new UserServiceImpl();
+		System.out.println(userServ.emailExists("123@mailinator.com"));
+		System.out.println(userServ.emailExists("obama@whitehouse.gov"));
+	}
+	
+	public static void wall()
+	{
+		FeedServiceImpl feedServ = new FeedServiceImpl();
+		System.out.println(feedServ.getItemsByPosterOrReceiver("89a359b6-27b9-44d5-9cb9-6faec0f3a4ed"));
+		System.out.println(feedServ.getItemsByReceiver("89a359b6-27b9-44d5-9cb9-6faec0f3a4ed"));
+		
+	}
+	
+
+	public static void main(String[] args) {
+<<<<<<< .mine
+		friendships();
+		users();
+		feed();
+		friendRequest();
+		email();
+=======
+		//friendships();
+		//users();
+		feed();
+		//friendRequest();
+		//email();
+>>>>>>> .r998
+		//wall();
+	}
+
+}

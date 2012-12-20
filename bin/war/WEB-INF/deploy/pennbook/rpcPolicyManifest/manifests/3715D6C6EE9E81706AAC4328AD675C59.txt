@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.pennbook.client.GreetingService
+path: 17CF4B82BED4D02BA50926B22A1DB811.gwt.rpc

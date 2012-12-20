@@ -1,0 +1,19 @@
+package edu.upenn.mkse212.db;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ListMultimap;
+
+public class MapUtil {
+	
+	public static Map<String, List<String>> convertMultimap(
+			ListMultimap<String, String> multimap) {
+		Map<String, List<String>> newMap = new HashMap<String, List<String>>();
+		for (String key: multimap.keySet()) {
+			newMap.put(key,multimap.get(key));
+		}
+		return newMap;
+	}
+}

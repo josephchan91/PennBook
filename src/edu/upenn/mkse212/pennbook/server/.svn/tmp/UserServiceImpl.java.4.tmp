@@ -1,0 +1,175 @@
+/*******************************************************************************
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package edu.upenn.mkse212.pennbook.server;
+
+
+import java.util.HashMap;
+import java.util.List;
+
+import edu.upenn.mkse212.db.IKeyValueStorage;
+import edu.upenn.mkse212.db.KeyValueStoreFactory;
+import edu.upenn.mkse212.db.Settings;
+import edu.upenn.mkse212.pennbook.client.UserService;
+import edu.upenn.mkse212.util.Credentials;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+public class UserServiceImpl extends RemoteServiceServlet implements UserService {
+	//firstName, lastName, email(unique), affiliation, interests, 
+	//birthday, relationship, hometown, recommendation, password hash
+	public static final String FIRST_NAME_ATTR="firstName";
+	public static final String LAST_NAME_ATTR="lastName";
+	public static final String EMAIL_ATTR="email";
+	public static final String AFFILIATION_ATTR="affiliation";
+	public static final String BIRTHDAY_ATTR="birthday";
+	public static final String HOMETOWN_ATTR="hometwon";
+	public static final String PASSWORD_HASH_ATTR="passwordHash";
+	public static final String SALT_ATTR = "salt";
+	public static final String INTEREST_ATTR = "interest";
+
+	public static final String DB_DOMAIN = "pennbook_users";
+	
+	private IKeyValueStorage store;
+	private ObjectMapper mapper;
+	
+	public UserServiceImpl() {
+		super();
+		store = KeyValueStoreFactory.getKeyValueStore(Settings.storeType, DB_DOMAIN, null, Settings.userId, Settings.authKey, false);
+		mapper = new ObjectMapper();
+		mapper.registerModule(new GuavaModule());
+	}
+	
+	/**
+	@Override
+	public String createUser(String firstName, String lastName, String email,
+			String password) {
+		
+		Credentials credentials;
+		String userAsJson = "";
+
+		try {
+			credentials = new Credentials(password);
+			ListMultimap<String,String> attrs = ArrayListMultimap.create();
+			attrs.put(FIRST_NAME_ATTR, firstName);
+			attrs.put(LAST_NAME_ATTR, lastName);
+			attrs.put(EMAIL_ATTR, email);
+			attrs.put(PASSWORD_HASH_ATTR,credentials.getPasswordHash());
+			attrs.put(SALT_ATTR, credentials.getSalt());
+			
+			String userId = credentials.getUserId();
+			store.put(userId, attrs);
+			attrs.put(IKeyValueStorage.KEYWORD_ATTR, userId);
+			userAsJson = mapper.writeValueAsString(attrs);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return userAsJson;
+	}
+	**/
+	
+	@Override
+	public HashMap<String,String> createUser(String firstName, String lastName, String email,
+			String password) {
+		
+		Credentials credentials;
+		HashMap<String,String> attrs = new HashMap<String,String>();
+
+		try {
+			credentials = new Credentials(password);
+			attrs.put(FIRST_NAME_ATTR, firstName);
+			attrs.put(LAST_NAME_ATTR, lastName);
+			attrs.put(EMAIL_ATTR, email);
+			attrs.put(PASSWORD_HASH_ATTR,credentials.getPasswordHash());
+			attrs.put(SALT_ATTR, credentials.getSalt());
+			
+			String userId = credentials.getUserId();
+			store.put(userId, attrs);
+			attrs.put(IKeyValueStorage.KEYWORD_ATTR, userId);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return attrs;
+	}
+
+	@Override
+	public String login(String email, String password) {
+		String query = String.format("SELECT * FROM %s WHERE %s='%s'",DB_DOMAIN,EMAIL_ATTR,email);
+		String userAsJson = "";
+		List<ListMultimap<String, String>> userAttrs = store.selectMulti(query);
+		for (ListMultimap<String,String> userMap : userAttrs)
+		{
+			String salt = userMap.get(SALT_ATTR).get(0);
+			String receivedPasswordHash;
+			try {
+				receivedPasswordHash = Credentials.hashPassword(password, salt);
+				String dbPasswordHash = userMap.get(PASSWORD_HASH_ATTR).get(0);
+				if (dbPasswordHash.equals(receivedPasswordHash)) {
+					userAsJson = mapper.writeValueAsString(userMap);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+		}
+		return userAsJson;
+	}
+
+	ListMultimap<String,String> getMultimap(String userId) {
+		return store.getMulti(userId);
+	}
+	
+	@Override
+	public String get(String userId) {
+		ListMultimap<String,String> m = getMultimap(userId);
+		String userAsJson = "";
+		try {
+			userAsJson = mapper.writeValueAsString(m);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return userAsJson;
+	}
+
+	@Override
+	public boolean emailExists(String email) {
+		String query = String.format("SELECT * FROM %s WHERE %s='%s'", DB_DOMAIN, EMAIL_ATTR,email );
+		int resultCount = store.select(query).size();
+		if (resultCount>0)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	public void addInterest(String userId, String interest) {
+		HashMap<String,String> map = new HashMap<String,String>();
+		map.put(INTEREST_ATTR, interest);
+		store.put(userId, map);
+	}
+
+}

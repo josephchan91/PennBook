@@ -1,0 +1,108 @@
+/*******************************************************************************
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package edu.upenn.mkse212.pennbook.server;
+
+import java.io.UnsupportedEncodingException;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import edu.upenn.mkse212.db.IKeyValueStorage;
+import edu.upenn.mkse212.db.KeyValueStoreFactory;
+import edu.upenn.mkse212.db.KeyValueStoreFactory.STORETYPE;
+import edu.upenn.mkse212.pennbook.client.UserService;
+import edu.upenn.mkse212.pennbook.models.User;
+import edu.upenn.mkse212.util.Credentials;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+public class UserServiceImpl extends RemoteServiceServlet implements UserService {
+	//firstName, lastName, email(unique), affiliation, interests, 
+	//birthday, relationship, hometown, recommendation, password hash
+	public static final String FIRST_NAME_ATTR="firstName";
+	public static final String LAST_NAME_ATTR="lastName";
+	public static final String EMAIL_ATTR="email";
+	public static final String AFFILIATION_ATTR="affiliation";
+	public static final String BIRTHDAY_ATTR="birthday";
+	public static final String HOMETOWN_ATTR="hometwon";
+	public static final String PASSWORD_HASH_ATTR="passwordHash";
+	private static final String SALT_ATTR = "salt";
+
+	public static final String DB_DOMAIN = "pennbook_users";
+	
+	private IKeyValueStorage store;
+	
+	public UserServiceImpl() {
+		super();
+		store = KeyValueStoreFactory.getKeyValueStore(STORETYPE.SIMPLEDB, "pennbook_users", null, "AKIAIHWGFOIBPHUTRUFQ", "K7CMy39AIz9JJK/cE11MAhqNEqqyJUAl2ZUy97Zc", false);
+	}
+	
+	@Override
+	public User createUser(String firstName, String lastName, String email,
+			String password) {		
+		Credentials credentials;
+		try {
+			credentials = new Credentials(password);
+			Map<String,String> attrs = new HashMap<String,String>();
+			attrs.put(FIRST_NAME_ATTR, firstName);
+			attrs.put(LAST_NAME_ATTR, lastName);
+			attrs.put(EMAIL_ATTR, email);
+			attrs.put(PASSWORD_HASH_ATTR,credentials.getPasswordHash());
+			attrs.put(SALT_ATTR, credentials.getSalt());
+			
+			String userId = credentials.getUserId();
+			store.put(userId, attrs);
+			attrs.put(IKeyValueStorage.KEYWORD_ATTR, userId);
+			
+			return new User(attrs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public User login(String email, String password) {
+		User authUser=null;
+		String query = String.format("SELECT * FROM %s WHERE %s='%s'",DB_DOMAIN,EMAIL_ATTR,email);
+		System.out.println(query);
+		List<HashMap<String, String>> userAttrs = store.select(query);
+		for (HashMap<String,String> userMap : userAttrs)
+		{
+			String salt = userMap.get(SALT_ATTR);
+			String receivedPasswordHash;
+			try {
+				receivedPasswordHash = Credentials.hashPassword(password, salt);
+				String dbPasswordHash = userMap.get(PASSWORD_HASH_ATTR);
+				if (dbPasswordHash.equals(receivedPasswordHash)) {
+					authUser = new User(userMap);
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+		}
+		return authUser;
+	}
+
+	@Override
+	public User get(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

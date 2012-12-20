@@ -1,0 +1,112 @@
+package edu.upenn.mkse212.pennbook.shared;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import edu.upenn.mkse212.pennbook.client.PennBook;
+
+
+
+public class FeedPanel extends VerticalPanel {
+	
+	String doerID;
+	String doerName;
+	String receiverID;
+	String receiverName;
+	String message;
+	
+	HorizontalPanel main = new HorizontalPanel();
+	VerticalPanel commentsPanel = new VerticalPanel();
+	
+	HorizontalPanel commentForm = new HorizontalPanel();
+	LabeledTextBox commentTbx = new LabeledTextBox("Write a comment...", false);
+	Button commentButton = new Button("Submit");
+	
+	PennBook app;
+	
+	public enum FeedType {
+		PROFILE,
+		STATUS,
+		POST,
+		FRIENDSHIP
+	}
+	
+	public FeedPanel(Object o, FeedType f, PennBook a) {
+		super();
+		
+		this.setStylePrimaryName("feed-box");
+		commentsPanel.setStylePrimaryName("comments-panel");
+		doerID = "doerID";
+		doerName = "doerName";
+		receiverID = "receiverID";
+		receiverName = "receiverName";
+		message = "message";
+		app = a;
+		
+		commentForm.add(commentTbx);
+		commentForm.add(commentButton);
+		
+		// Picture of doer
+		main.add(new HTML("<img src=image/profile_pics"+doerID+">"));
+		
+		// Add receiver, content, and comments space if applicable
+		switch(f){
+		case STATUS:
+			main.add(new HTML("<a href=images/profile_pics/"+doerID+">"+doerName+"</a><br>"+
+		message));
+			this.add(main);
+			this.add(commentsPanel);
+			this.add(commentForm);
+			break;
+		case POST:
+			main.add(new HTML("<a href=images/profile_pics/"+doerID+">"+doerName+"</a> > " +
+					"<a href=images/profile_pics/"+receiverID+">"+receiverName+"</a><br>"+message));
+			this.add(main);
+			this.add(commentsPanel);
+			this.add(commentForm);
+			break;
+		case PROFILE:
+			main.add(new HTML("<a href=images/profile_pics/"+doerID+">"+doerName+"</a> updated his profile"));
+			this.add(main);
+			break;
+		case FRIENDSHIP:
+			main.add(new HTML("<a href=images/profile_pics/"+doerID+">"+doerName+"</a> is now friends with " +
+					"<a href=images/profile_pics/"+receiverID+">"+receiverName+"</a>."));
+			this.add(main);
+			break;
+		}
+		
+		commentButton.addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				if(!commentTbx.isDefaultOrEmpty()) {
+					// No errors!
+					String currentID = "1232412412";
+					HorizontalPanel newComment = new HorizontalPanel();
+					newComment.setStylePrimaryName("comment-box");
+					newComment.add(new HTML("<img src=image/profile_pics"+currentID+">"));
+					newComment.add(new Label(commentTbx.getText()));
+					commentsPanel.add(newComment);
+					/**
+					userService.createUser(firstNameTbx.getText(), lastNameTbx.getText(),
+							emailTbx.getText(), passwordTbx.getText(), new AsyncCallback<Boolean>() {
+						public void onFailure(Throwable caught) {
+							Window.alert("Failed to create user");
+						}
+						public void onSuccess(Boolean result) {
+							Window.alert("Successfully created user!");
+							
+						}
+					});
+					**/
+				}
+			}
+		});
+		
+	}
+}

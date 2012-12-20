@@ -1,0 +1,34 @@
+Full name:  Xiao Li, Joseph Chan
+SEAS login: lixiao1, joch
+
+Features:
+Start page - registration and log-in
+Hashed passwords
+Profile page - name, email, affiliation, interests, birthday
+Status updates
+Wall posts
+New friend requests and notifications popups
+Online friends list
+Commenting
+Dynamic refreshing
+Dynamic search
+Network visualizer
+Adsorption-based friend recommendations
+
+Extra-Credit:
+Tagging
+Live chat
+Friendship request/confirmation
+
+Source files:
+DB: Example, HadoopConvert, IKeyValueStorage, KeyValueStoreFactory, MapUtil, Settings, SimpleDBStorage
+Client: ChatBoxPanel, ChatException, ChatMessage, ChatService/Async, FeedPanel, FeedService/Async,
+FriendRequestService/Async, FriendshipService/Async, FriendVisualization, LabeledTextBox, PennBook, RecommendationService/Async, UserService/Async
+Hadoop: DiffMapper/Reducer, DiffSortMapper/Reducer, FinishMapper/Reducer, FriendRecommendationDriver, InitMapper/Reducer, IterMapper/Reducer, RecommendationLoader
+Server: ChatServiceImpl, FeedServiceImpl, FriendRequestServiceImpl, FriendshipServiceImpl, RecommendationServiceImpl, UserServiceImpl
+Shared: Credentials, FeedItem
+
+We wrote all the code except some DB classes and FriendVisualization provided.
+
+Running project:
+Simply right click project > Run As > Web App

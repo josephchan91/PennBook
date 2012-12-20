@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.pennbook.client.FriendshipService
+path: 262993A7AD84CB9DF6CEB546F55D6B85.gwt.rpc

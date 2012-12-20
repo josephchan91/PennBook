@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.pennbook.client.FeedService
+path: E59751DF245F237DCE40FA22AE02C4B1.gwt.rpc

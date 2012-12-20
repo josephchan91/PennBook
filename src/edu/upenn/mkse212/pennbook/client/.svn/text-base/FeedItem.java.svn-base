@@ -1,0 +1,100 @@
+package edu.upenn.mkse212.pennbook.models;
+
+import java.util.ArrayList;
+
+
+import java.util.List;
+import com.google.common.collect.ListMultimap;
+
+import edu.upenn.mkse212.db.IKeyValueStorage;
+import edu.upenn.mkse212.pennbook.server.FeedServiceImpl;
+
+public class FeedItem {
+	private String id;
+	private String message;
+	private String posterId;
+	private String receiverId;
+	private String posterName;
+	private String receiverName;
+	private ArrayList<Comment> comments;
+	private long timestamp;
+	private FeedItemType type;
+	
+	public enum FeedItemType {
+		STATUS,
+		PROFILE_UPDATE,
+		POST,
+		NEW_FRIENDSHIP
+	}
+	
+
+	public FeedItem(ListMultimap<String,String> m) {
+		id = m.get(IKeyValueStorage.KEYWORD_ATTR).get(0);
+		message = m.get(FeedServiceImpl.MESSAGE_ATTR).get(0);
+		posterId = m.get(FeedServiceImpl.POSTER_ID_ATTR).get(0);
+		receiverId = m.get(FeedServiceImpl.RECEIVER_ID_ATTR).get(0);
+		posterName = m.get(FeedServiceImpl.POSTER_NAME_ATTR).get(0);
+		receiverName = m.get(FeedServiceImpl.RECEIVER_NAME_ATTR).get(0);
+		String timestampString = m.get(FeedServiceImpl.TIMESTAMP_ATTR).get(0);
+		
+		timestamp = Long.parseLong(timestampString);
+		
+		int typeNum = Integer.parseInt(m.get(FeedServiceImpl.TYPE_ATTR).get(0));
+		type = FeedItemType.values()[typeNum];
+		
+		if (m.containsKey(FeedServiceImpl.COMMENT_ATTR)) {
+			List<String> commentStrings = m.get(FeedServiceImpl.COMMENT_ATTR);
+			comments = parseComments(commentStrings);
+		} else {
+			comments = new ArrayList<Comment>();
+		}
+	}
+	
+	private ArrayList<Comment> parseComments(List<String> commentStrings) {
+		ArrayList<Comment> comments = new ArrayList<Comment>();
+		Comment comment;
+		for (String commentStr : commentStrings) {
+			comment = new Comment();
+			comments.add(comment);
+		}
+		return comments;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+	
+	public String getReceiverName() {
+		return receiverName;
+	}
+	
+	public String getPosterName() {
+		return posterName;
+	}
+	
+	public String getPosterId() {
+		return posterId;
+	}
+	
+	public String getReceiverId() {
+		return receiverId;
+	}
+	
+	public long getTimestamp() {
+		return timestamp;
+	}
+	
+	public ArrayList<Comment> getComments() {
+		return comments;
+	}
+	
+	public FeedItemType getType() {
+		return type;
+	}
+
+	public String getId() {
+		return id;
+	}
+	
+
+}

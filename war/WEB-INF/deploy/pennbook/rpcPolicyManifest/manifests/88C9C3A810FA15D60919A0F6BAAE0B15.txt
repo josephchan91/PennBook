@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.pennbook.client.ChatService
+path: 295A9020A5C28310C32AE682D20BBCCA.gwt.rpc

@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.pennbook.client.RecommendationService
+path: 5BD191F946CFFDCB114675BAE275D18E.gwt.rpc

@@ -1,0 +1,138 @@
+/** Add css rules here for your application. */
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}
+
+.signin-panel {
+	margin-top: 1.25em;
+	float: right;
+}
+
+.menu-panel {
+	margin-top: 1.5em;
+}
+
+.dropdown-item {
+	margin-left: 2em;
+	margin-right: -0.5em;
+}
+
+.search-bar {
+	margin-top: -0.25em;
+}
+
+/** Registration Form Panel **/
+#regPanel {
+	margin-top: 8em;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#errorLabel {
+	margin-top: 2em;
+	display: block;
+}
+
+.short-input {
+	width: 12em;
+	margin-right: 0.5em;
+}
+
+.long-input {
+	width: 25.5em;
+}
+
+/** Content **/
+#header {
+	/**background-color: red;**/
+	display: block;
+	z-index: 0;
+}
+
+#homePanel {
+	margin-top: 4.5em;
+}
+
+/** PROFILE **/
+#profile {
+	padding-left: 3em;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-width: 1px;
+	border-color: #e5e5e5;
+	position: fixed;
+}
+
+.profile-container {
+	margin-top: 2em;
+	margin-bottom: 1em;
+	margin-left: 2.5em;
+}
+
+.name-pic-panel {
+	margin-bottom: 2em;
+}
+
+.profile-pic {
+	margin-right:1em;
+}
+
+/** FEED **/
+#feed {
+	position: absolute;
+	left: 24em;
+}
+
+.feed-container {
+	margin-top: 2em;
+}
+
+.status-panel {
+	margin-bottom: 2em;
+}
+
+.all-feeds-container {
+	width: 100%;
+}
+
+.feed-box {
+	border-top-style: solid;
+	border-width: 1px;
+	border-color: #e5e5e5;
+	margin-bottom: 2em;
+	width: 100%;
+}
+
+.feed-box .gwt-TextBox {
+	margin-top: 0.5em;
+	margin-right: 0.5em;
+}
+.feed-box .gwt-Button {
+	margin-top: 0.5em;
+}
+
+.comments-panel {
+	width: 100%;
+}
+
+.comment-box {
+	background-color: #e5e5e5;
+	padding: 0.5em;
+	margin-bottom: 0.25em;
+	width: 100%;
+}
+
+/** RECOMMENDATIONS **/
+#recommendations {
+}
+
+.gwt-TextBox {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-mox-boz-sizing: border-box;
+}

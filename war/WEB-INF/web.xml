@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>PennBook.html</welcome-file>
+  </welcome-file-list>
+  <servlet>
+  	<servlet-name>UserService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.UserServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>UserService</servlet-name>
+  	<url-pattern>/pennbook/UserService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>FriendshipService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.FriendshipServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FriendshipService</servlet-name>
+  	<url-pattern>/pennbook/FriendshipService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>FeedService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.FeedServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FeedService</servlet-name>
+  	<url-pattern>/pennbook/FeedService</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>FriendRequestService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.FriendRequestServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FriendRequestService</servlet-name>
+  	<url-pattern>/pennbook/FriendRequestService</url-pattern>
+  </servlet-mapping>
+    <servlet>
+  	<servlet-name>RecommendationService</servlet-name>
+  	<servlet-class>edu.upenn.mkse212.pennbook.server.RecommendationServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>RecommendationService</servlet-name>
+  	<url-pattern>/pennbook/RecommendationService</url-pattern>
+  </servlet-mapping>
+
+  <!-- Listener for shutting down the comet processor when the ServletContext is destroyed -->
+  <listener>
+    <listener-class>net.zschech.gwt.comet.server.CometServletContextListener</listener-class>
+  </listener>
+  
+  <!-- Listener for invalidating CometSessions when HTTPSessions are invalidated -->
+  <listener>
+    <listener-class>net.zschech.gwt.comet.server.CometHttpSessionListener</listener-class>
+  </listener>
+
+  <!-- the RPC service called by the client -->
+  <servlet>
+    <servlet-name>chatService</servlet-name>
+    <servlet-class>edu.upenn.mkse212.pennbook.server.ChatServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>chatService</servlet-name>
+    <url-pattern>/pennbook/ChatService</url-pattern>
+  </servlet-mapping>
+
+  <!-- the comet servlet for streaming messages to the client -->
+  <servlet>
+    <servlet-name>chatComet</servlet-name>
+    <servlet-class>net.zschech.gwt.comet.server.CometServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>chatComet</servlet-name>
+    <url-pattern>/pennbook/comet</url-pattern>
+  </servlet-mapping>
+
+</web-app>

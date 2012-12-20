@@ -1,0 +1,128 @@
+package edu.upenn.mkse212.pennbook.server;
+
+import java.util.Map;
+
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.http.HttpSession;
+
+import net.zschech.gwt.comet.server.CometServlet;
+import net.zschech.gwt.comet.server.CometSession;
+
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+import edu.upenn.mkse212.pennbook.client.ChatException;
+import edu.upenn.mkse212.pennbook.client.ChatMessage;
+import edu.upenn.mkse212.pennbook.client.ChatService;
+
+/**
+ * A simple implementation of {@link ChatService} which maintains all its state in memory.
+ * 
+ * @author Richard Zschech
+ */
+public class ChatServiceImpl extends RemoteServiceServlet implements ChatService {
+	
+	/**
+	 * A mapping of user names to CometSessions used for routing messages.
+	 */
+	private ConcurrentMap<String, CometSession> users = new ConcurrentHashMap<String, CometSession>();
+	
+	@Override
+	public String getUserId() throws ChatException {
+		// check if there is a HTTP session setup.
+		HttpSession httpSession = getThreadLocalRequest().getSession(false);
+		if (httpSession == null) {
+			return null;
+		}
+		
+		// return the user name
+		return (String) httpSession.getAttribute("userId");
+	}
+	
+	/**
+	 * @see net.zschech.gwt.chat.client.ChatService#login(java.lang.String)
+	 */
+	@Override
+	public void login(String userId) throws ChatException {
+		// Get or create the HTTP session for the browser
+		HttpSession httpSession = getThreadLocalRequest().getSession();
+		// Get or create the Comet session for the browser
+		CometSession cometSession = CometServlet.getCometSession(httpSession);
+		// Remember the user name for the
+		httpSession.setAttribute("userId", userId);
+		
+		// setup the mapping of user names to CometSessions
+		if (users.putIfAbsent(userId, cometSession) != null) {
+			// some one else has already logged in with this user name 
+			/**
+			httpSession.invalidate();
+			throw new ChatException("UserID: " + userId + " already logged in");
+			**/
+		}
+	}
+	
+	/**
+	 * @see net.zschech.gwt.chat.client.ChatService#logout(java.lang.String)
+	 */
+	@Override
+	public void logout(String userId) throws ChatException {
+		// check if there is a HTTP session setup.
+		HttpSession httpSession = getThreadLocalRequest().getSession(false);
+		if (httpSession == null) {
+			throw new ChatException("UserId: " + userId + " is not logged in: no http session");
+		}
+		
+		// check if there is a Comet session setup. In a larger application the HTTP session may have been
+		// setup via other means.
+		CometSession cometSession = CometServlet.getCometSession(httpSession, false);
+		if (cometSession == null) {
+			throw new ChatException("UserId: " + userId + " is not logged in: no comet session");
+		}
+		
+		// check the user name parameter matches the HTTP sessions user name
+		if (!userId.equals(httpSession.getAttribute("userId"))) {
+			throw new ChatException("UserId: " + userId + " is not logged in on this session");
+		}
+		
+		// remove the mapping of user name to CometSession
+		users.remove(userId, cometSession);
+		httpSession.invalidate();
+	}
+	
+	/**
+	 * @see net.zschech.gwt.chat.client.ChatService#send(java.lang.String)
+	 */
+	@Override
+	public void send(String senderId, String senderName, String receiverId, String message) throws ChatException {
+		// check if there is a HTTP session setup.
+		HttpSession httpSession = getThreadLocalRequest().getSession(false);
+		if (httpSession == null) {
+			throw new ChatException("not logged in: no http session");
+		}
+		// get the user id for the HTTP session.
+		String userId = (String) httpSession.getAttribute("userId");
+		if (userId == null) {
+			throw new ChatException("not logged in: no http session userId");
+		}
+		// create the chat message
+		ChatMessage chatMessage = new ChatMessage();
+		chatMessage.senderId = senderId;
+		chatMessage.senderName = senderName;
+		chatMessage.receiverId = receiverId;
+		chatMessage.message = message;
+		
+		for (Map.Entry<String, CometSession> entry : users.entrySet()) {
+			GWT.log("sender id = "+userId);
+			GWT.log("entry key = "+entry.getKey());
+			GWT.log("receiver id = "+receiverId);
+			if (entry.getKey().equals(receiverId)) {
+				entry.getValue().enqueue(chatMessage);
+			}
+		}
+	}
+
+}

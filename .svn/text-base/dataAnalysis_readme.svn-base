@@ -1,0 +1,28 @@
+Friendship, interest, and affiliation data are dumped from the db with edu.upenn.mkse212.db.HadoopConvert
+
+Original format: entity,entity (where entity can be userId (friend), interest, or
+
+Init converts to the following format:
+fromNode		toNodes;weight;fromNode, adsorp. value (=1)
+
+Iter takes as input and outputs the same format except, there can be more node,adsorption value pairs for each node
+e.g., 
+	fromNode		toNode1,toNode2...;weight;node, adsorp. value,node, adsorp. value...
+
+Each time the toNodes are used as map output keys and reduce input keys, and all the 
+fromNodes with their weights and adsorption values are aggregated for each destination node
+to produce a sum for each adsorption value that has thus far been propagated to that node.
+
+
+To run the Hadoop jobs:
+hadoop jar rec.jar edu.upenn.mkse212.pennbook.hadoop.FriendRecommendationDriver composite pb_in pb_out i1 i2 diff 3 0.1
+
+where pb_in and pb_out are the input and output directories, i1 and i2 are the intermediate directories, diff is the diff directory,
+3 is the number of reducers the value of diff. below which the algorithm is considered converged and stopped
+
+rec.jar is in the PennBook directory.
+
+RecommendationLoader then sets the recommendation list values for each userId in the DB
+who has recommendations.
+
+The job was also run on Elastic MapReduce with jar location: s3n://pennbook-xl-jc/jars/rec.jar and arguments edu.upenn.edu.mkse212.pennbook.hadoop.FriendRecommendationDriver composite s3n://pennbook-xl-jc/in s3n://pennbook-xl-jc/out inter1 inter2 diff 4 0.3

@@ -1,0 +1,2 @@
+serviceClass: edu.upenn.mkse212.pennbook.client.UserService
+path: 25B6E6A76EBC43302921DA223FB3AF1C.gwt.rpc

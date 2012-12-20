@@ -1,0 +1,9 @@
+package edu.upenn.mkse212.pennbook.models;
+
+public class Comment {
+	private String message;
+	private String posterName;
+	private String posterId;
+	private long timestamp;
+
+}

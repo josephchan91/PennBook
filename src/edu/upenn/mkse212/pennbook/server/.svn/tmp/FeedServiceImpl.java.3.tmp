@@ -1,0 +1,175 @@
+/*******************************************************************************
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package edu.upenn.mkse212.pennbook.server;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import edu.upenn.mkse212.db.IKeyValueStorage;
+import edu.upenn.mkse212.db.KeyValueStoreFactory;
+import edu.upenn.mkse212.db.MapUtil;
+import edu.upenn.mkse212.db.Settings;
+import edu.upenn.mkse212.pennbook.client.FeedService;
+import edu.upenn.mkse212.pennbook.models.FeedItem.FeedItemType;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.collect.ListMultimap;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+public class FeedServiceImpl extends RemoteServiceServlet implements FeedService {
+
+	public static final String MESSAGE_ATTR="message";
+	public static final String POSTER_ID_ATTR="posterId";
+	public static final String RECEIVER_ID_ATTR="receiverId";
+	public static final String VIEWER_ID_ATTR="viewerId";
+	public static final String POSTER_NAME_ATTR="posterName";
+	public static final String RECEIVER_NAME_ATTR="receiverName";
+	public static final String COMMENT_ATTR = "comment";
+	public static final String TIMESTAMP_ATTR = "timestamp";
+	public static final String POST_ID_ATTR = "postId"; //id common to all copies of a post
+	public static final String TYPE_ATTR = "type";
+	
+	private static final String DB_DOMAIN = "pennbook_feed";
+	private ObjectMapper mapper;
+	
+
+	
+	private IKeyValueStorage store;
+	
+	public FeedServiceImpl() {
+		super();
+		store = KeyValueStoreFactory.getKeyValueStore(Settings.storeType, DB_DOMAIN, null, Settings.userId, Settings.authKey, false);
+		mapper = new ObjectMapper();
+		mapper.registerModule(new GuavaModule());
+	}
+	
+	
+	@Override
+	public void postFeedItem(String message, String posterId,
+			String receiverId, String posterName, String receiverName, FeedItemType type ) {
+		HashMap<String,String> m = new HashMap<String,String>();
+		String postId = UUID.randomUUID().toString();
+		m.put(MESSAGE_ATTR, message);
+		m.put(POSTER_ID_ATTR, posterId);
+		m.put(RECEIVER_ID_ATTR,receiverId);
+		m.put(POSTER_NAME_ATTR,posterName);
+		m.put(RECEIVER_NAME_ATTR, receiverName);
+		m.put(TYPE_ATTR, type.ordinal()+"");
+		m.put(TIMESTAMP_ATTR, System.currentTimeMillis()+"");
+		m.put(POST_ID_ATTR, postId);
+		
+		FriendshipServiceImpl frServ = new FriendshipServiceImpl();
+		List<String> viewerIds = frServ.getFriendIds(posterId);
+		viewerIds.add(posterId);//poster should also be a viewer
+		
+		for (String id : viewerIds) {
+			m.put(VIEWER_ID_ATTR,id);
+			String feedItemId = UUID.randomUUID().toString();
+			store.put(feedItemId,m);
+		}
+	}
+
+	@Override
+	public List<Map<String, List<String>>> getFeedItems(String userId) {
+		String query = String.format("SELECT * FROM %s WHERE %s='%s' AND %s>'0' ORDER BY %s DESC", DB_DOMAIN,VIEWER_ID_ATTR,userId,TIMESTAMP_ATTR,TIMESTAMP_ATTR);
+		return getItems(query);
+	}
+	
+	@Override
+	public List<Map<String,List<String>>> getItemsByPosterOrReceiver(String userId) {
+		String query = String.format("SELECT * FROM %s WHERE (%s='%s' OR %s='%s') AND %s='%s' AND %s>'0' ORDER BY %s DESC", DB_DOMAIN,POSTER_ID_ATTR,userId,RECEIVER_ID_ATTR,userId,VIEWER_ID_ATTR,userId,TIMESTAMP_ATTR,TIMESTAMP_ATTR);
+		System.out.println(query);
+		return getItems(query);
+	}
+	
+	List<Map<String,List<String>>> getItems(String query) {
+		List<ListMultimap<String,String>> maps = store.selectMulti(query);
+		List<Map<String,List<String>>> newMaps = new ArrayList<Map<String,List<String>>>();
+		Map<String, List<String>> newMap;
+		for (ListMultimap<String,String> multimap : maps) {
+			newMap = MapUtil.convertMultimap(multimap);
+			newMaps.add(newMap);
+		}
+		return newMaps;
+	}
+
+
+
+
+	@Override
+	public List<Map<String,List<String>>> getItemsByReceiver(String userId) {
+		String query = String.format("SELECT * FROM %s WHERE %s='%s' AND %s='%s' AND %s>'0' ORDER BY %s DESC", DB_DOMAIN,RECEIVER_ID_ATTR,userId,VIEWER_ID_ATTR,userId,TIMESTAMP_ATTR,TIMESTAMP_ATTR);
+		return getItems(query);
+	}
+<<<<<<< .mine
+
+
+	@Override
+	public String addComment(String postId, String posterId, String posterName,
+			String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+=======
+
+
+	@Override
+	public String addComment(String postId, String posterId, String posterName,
+			String message) {
+		HashMap<String,Object> commentMap = new HashMap<String,Object>();
+		commentMap.put(TIMESTAMP_ATTR, System.currentTimeMillis());
+		commentMap.put(POSTER_ID_ATTR, posterId);
+		commentMap.put(POSTER_NAME_ATTR, posterName);
+		commentMap.put(MESSAGE_ATTR, message);
+		
+		String commentAsJson = "";
+		try {
+			commentAsJson = mapper.writeValueAsString(commentMap);
+		} catch (JsonProcessingException e) {
+			System.exit(1);
+			e.printStackTrace();
+		}
+		HashMap<String,String> map = new HashMap<String,String>();
+		map.put(COMMENT_ATTR, commentAsJson); 
+		
+		List<String> feedItemIds = feedItemIdsByPostId(postId);
+		for (String feedItemId : feedItemIds) //add comment to each copy of the post
+		{
+			store.put(feedItemId,map);
+		}
+		
+		return commentAsJson;
+	}
+>>>>>>> .r998
+	
+	
+	List<String> feedItemIdsByPostId(String postId) {
+		String query = String.format("SELECT * FROM %s WHERE %s='%s'", DB_DOMAIN,POST_ID_ATTR, postId);
+		List<Map<String, String>> feedItems = store.select(query);
+		List<String> ids = new ArrayList<String>();
+		
+		for (Map<String,String> feedItem : feedItems)
+		{
+			ids.add(feedItem.get(IKeyValueStorage.KEYWORD_ATTR)); //get post key
+		}
+		return ids;
+	}
+}

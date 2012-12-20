@@ -1,0 +1,287 @@
+/** Add css rules here for your application. */
+
+.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.fixed-header {
+	margin-right: 2em;
+}
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}
+
+.signin-panel {
+	margin-top: 1.25em;
+	float: right;
+}
+
+.menu-panel {
+	margin-top: 1.5em;
+}
+
+.dropdown-item {
+	margin-left: 2em;
+	margin-right: -0.5em;
+}
+
+/** Notifications **/
+
+.requests-notifications-bar
+{
+	float: left;
+	width: 6em;
+	display: inline;
+}
+
+.popup
+{
+	position: absolute;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-width: 1px;
+	background-color: #ffffff;
+	border-color: #e5e5e5;
+	top: 61px;
+}
+
+.popup-item
+{
+	margin: 5px;
+}
+
+/** Search **/
+.search-box
+{
+	float: left;
+}
+
+/** Registration Form Panel **/
+#regPanel {
+	margin-top: 8em;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#errorLabel {
+	margin-top: 2em;
+	display: block;
+}
+
+.short-input {
+	width: 12em;
+	margin-right: 0.5em;
+}
+
+.long-input {
+	width: 25.5em;
+}
+
+.bday-input {
+	width: 9.5em;
+}
+/** Content **/
+body {
+	position: relative;
+	height: 100%;
+	min-height: 100%;
+}
+
+#header {
+	/**background-color: red;**/
+	display: block;
+	z-index: 0;
+}
+
+#homePanel {
+	margin-top: 4.5em;
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/** PROFILE **/
+#profile {
+	padding-left: 1em;
+	display: inline;
+}
+
+.profile-container {
+	margin-top: 2em;
+	margin-bottom: 1em;
+	margin-left: -7em;
+	width: 18em;
+}
+
+.name-pic-panel {
+	margin-bottom: 2em;
+}
+
+.profile-pic {
+	margin-right:1em;
+}
+
+/** FEED **/
+.not-friends-panel {
+	width: 34.45em;
+	margin-left: 1em;
+	padding: 1em;
+}
+
+#feed {
+	border-left-style: solid;
+	border-width: 1px;
+	border-color: #e5e5e5;
+}
+
+.message-box {
+	width: 30em;
+	margin-left: 1em;
+}
+
+.feed-pic {
+	margin-top: 0.5em;
+	margin-right: 0.5em;
+}
+
+.feed-container {
+	margin-top: 2em;
+}
+
+.status-panel {
+	margin-bottom: 2em;
+}
+
+.all-feeds-container {
+	width: 100%;
+}
+
+.feed-box {
+	border-top-style: solid;
+	border-width: 1px;
+	border-color: #e5e5e5;
+	margin-bottom: 2em;
+	width: 100%;
+}
+
+.feed-box-wrapper {
+	margin-top: 1em;
+	margin-left: 1em;
+	width: 100%;
+}
+
+.feed-box .gwt-TextBox {
+	margin-top: 0.5em;
+	margin-right: 0.5em;
+}
+.feed-box .gwt-Button {
+	margin-top: 0.5em;
+}
+
+.comments-panel {
+	width: 100%;
+}
+
+.comment-content {
+	margin-left: 1em;
+}
+
+.comment-tbx {
+	margin-top : 0.5em;
+	width: 30em;
+}
+
+.comment-box {
+	background-color: #f5f5f5;
+	padding-top: 0.5em;
+	padding-right: 0.5em;
+	padding-bottom: 0.5em;
+	margin-bottom: 0.25em;
+	width: 95%;
+	float: left;
+}
+
+/** Right Sidebar **/
+#right-sidebar {
+	width: 18em;
+}
+
+.recommend-friends-panel {
+	margin-top: 2em;
+}
+
+.online-friend-panel {
+	margin-bottom: 0.25em;
+}
+
+.gwt-TextBox {
+	-webkit-box-sizing: border-box;
+	-mox-boz-sizing: border-box;
+}
+
+/** Visualizer **/
+#infovis {
+	width: 700px;
+	height: 400px;
+}
+
+.node-detail-panel
+{
+	margin: 0.5em;
+}
+
+/** Chat Panel **/
+.chat-panel {
+	width: 99%;
+	height: 30px;
+	background-color: #e5e5e5;
+	border-width: 1px;
+	position: fixed;
+	bottom: 0;
+	margin: 0px;
+	padding: 0px;
+}
+
+.chat-container {
+	float: right;
+	width: 220px;
+	position: relative;
+	margin-left: 2px;
+	border-width: 1px;
+	border-color: #e5e5e5;
+}
+
+.chat-box-panel {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+.chat-header {
+	background-color: #0066cc;
+	color: #ffffff;
+}
+
+/*TOOLTIPS*/
+.tip {
+    color: #111;
+    width: 139px;
+    background-color: white;
+    border:1px solid #ccc;
+    -moz-box-shadow:#555 2px 2px 8px;
+    -webkit-box-shadow:#555 2px 2px 8px;
+    -o-box-shadow:#555 2px 2px 8px;
+    box-shadow:#555 2px 2px 8px;
+    opacity:0.9;
+    filter:alpha(opacity=90);
+    font-size:10px;
+    font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+    padding:7px;
+}
